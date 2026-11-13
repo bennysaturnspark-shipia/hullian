@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>雲晶 LUMIÈRE | 天然水晶手串定製模擬器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #F8F7F4;
+            --brand-gold: #B68D40;
+            --brand-dark: #1F1E1C;
+        }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #ECEAE4;
+            color: #2B2927;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .serif-font {
+            font-family: 'Noto Serif TC', serif;
+        }
+        /* Custom Scrollbars */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .thin-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .thin-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 9999px;
+        }
+        /* Subtle animations */
+        @keyframes pulse-soft {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.04); opacity: 1; }
+        }
+        .animate-pulse-soft {
+            animation: pulse-soft 2.4s infinite ease-in-out;
+        }
+        .bead-card:active {
+            transform: scale(0.95);
+        }
+        .tool-btn:active:not(:disabled) {
+            transform: scale(0.92);
+            background-color: #F3EFE6;
+        }
+    </style>
+</head>
+<body class="h-dvh w-screen flex items-center justify-center">
+
+    <!-- App Container: Mobile-first frame on desktop, full screen on mobile -->
+    <div id="app-shell" class="relative w-full h-dvh max-w-[480px] bg-[#F8F7F4] md:h-[94dvh] md:rounded-[32px] md:shadow-2xl md:border md:border-stone-300/80 flex flex-col overflow-hidden">
+
+        <!-- ================= TOP STATUS BAR ================= -->
+        <header class="bg-white/95 backdrop-blur-md px-3.5 py-2.5 border-b border-stone-200/80 flex items-center justify-between shrink-0 z-20">
+            <!-- Wrist Setup Trigger -->
+            <button id="btn-open-wrist-modal" class="flex items-center gap-1.5 bg-stone-100 hover:bg-stone-200/80 active:scale-95 transition px-3 py-1.5 rounded-full text-xs font-medium text-stone-700">
+                <svg class="w-4 h-4 text-stone-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span>手圍設置</span>
+                <span id="header-target-wrist" class="text-[11px] font-bold text-amber-700 bg-amber-100/80 px-1.5 py-0.5 rounded-full">15.0cm</span>
+            </button>
+
+            <!-- Live Circumference, Price & Weight -->
+            <div class="flex flex-col items-center">
+                <div class="flex items-baseline gap-1">
+                    <span class="text-[11px] text-stone-400">適用手圍</span>
+                    <span id="live-wrist-cm" class="text-lg font-bold tracking-tight text-stone-900">0.00</span>
+                    <span class="text-xs font-semibold text-stone-700">cm</span>
+                    <span id="wrist-fit-badge" class="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-stone-100 text-stone-500 font-medium">未串珠</span>
+                </div>
+                <div class="flex items-center gap-3 text-[11px] text-stone-400 leading-none mt-0.5">
+                    <span id="live-price" class="text-amber-700 font-semibold">HK$0.00</span>
+                    <span>·</span>
+                    <span id="live-weight">0.00g</span>
+                    <span>·</span>
+                    <span id="live-count">0顆</span>
+                </div>
+            </div>
+
+            <!-- Finish / Quote Button -->
+            <button id="btn-finish-design" class="bg-stone-900 hover:bg-stone-800 active:scale-95 transition text-white text-xs font-semibold px-3.5 py-2 rounded-full flex items-center gap-1 shadow-sm">
+                <span>完成</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </header>
+
+        <!-- ================= FLOATING TIP BANNER ================= -->
+        <div id="tip-banner" class="mx-3 mt-2 px-3 py-1.5 bg-amber-50/95 border border-amber-200/70 rounded-lg flex items-center justify-between text-[11px] text-amber-800 shrink-0 z-10">
+            <div class="flex items-center gap-1.5">
+                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-500 text-white font-bold text-[10px]">!</span>
+                <span>長按手珠拖拉可調換位置，拖出圓圈外可刪除手珠</span>
+            </div>
+            <button id="btn-close-tip" class="text-amber-600 hover:text-amber-900 p-0.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- ================= INTERACTIVE BRACELET CANVAS WORKBENCH ================= -->
+        <div class="relative flex-1 min-h-[250px] flex items-center justify-center overflow-hidden select-none" id="canvas-container">
+            <canvas id="bracelet-canvas" class="w-full h-full block touch-none cursor-grab active:cursor-grabbing"></canvas>
+
+            <!-- Floating Quick Helpers (Top-Right & Bottom-Left of Canvas) -->
+            <div class="absolute top-2.5 left-3 flex flex-col gap-1.5 pointer-events-auto">
+                <button id="btn-auto-fill" class="bg-white/90 hover:bg-white backdrop-blur border border-stone-200/90 shadow-sm rounded-full px-2.5 py-1 text-[11px] font-medium text-stone-700 flex items-center gap-1 active:scale-95 transition" title="以目前選中或最後一顆主珠填滿目標手圍">
+                    <span class="text-amber-500">✨</span>
+                    <span>一鍵填滿手圍</span>
+                </button>
+            </div>
+
+            <div class="absolute top-2.5 right-3 flex flex-col items-end gap-1.5 pointer-events-none">
+                <div id="wrist-progress-pill" class="bg-white/90 backdrop-blur border border-stone-200/80 rounded-full px-2.5 py-1 text-[10px] text-stone-600 shadow-sm flex items-center gap-1.5">
+                    <span>目標進度</span>
+                    <div class="w-14 h-1.5 bg-stone-200 rounded-full overflow-hidden">
+                        <div id="wrist-progress-bar" class="h-full bg-amber-500 transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <span id="wrist-progress-text" class="font-semibold text-stone-800">0%</span>
+                </div>
+            </div>
+
+            <!-- Selected Bead Floating Badge -->
+            <div id="selected-bead-pill" class="hidden absolute bottom-2 left-1/2 -translate-x-1/2 bg-stone-900/85 backdrop-blur text-white px-3 py-1 rounded-full text-[11px] flex items-center gap-2 shadow-md pointer-events-none">
+                <span id="selected-bead-name">黃瑪瑙 10mm</span>
+                <span class="text-amber-300 font-semibold" id="selected-bead-price">HK$18</span>
+            </div>
+
+            <!-- Drag-out Delete Indicator Ring -->
+            <div id="delete-zone-hint" class="hidden absolute inset-2 border-2 border-dashed border-rose-400/80 rounded-2xl pointer-events-none flex items-end justify-center pb-3 bg-rose-50/20">
+                <span class="bg-rose-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">鬆開手即可刪除此珠</span>
+            </div>
+        </div>
+
+        <!-- ================= FINE-TUNING CONTROL TOOLBAR (微調工具列) ================= -->
+        <div class="bg-white border-t border-b border-stone-200/80 px-2 py-1.5 flex items-center justify-around shrink-0 z-10">
+            <button id="tool-left" class="tool-btn flex flex-col items-center justify-center w-11 py-1 rounded-lg text-stone-600 disabled:opacity-35 transition">
+                <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                <span class="text-[10px]">左移</span>
+            </button>
+            <button id="tool-right" class="tool-btn flex flex-col items-center justify-center w-11 py-1 rounded-lg text-stone-600 disabled:opacity-35 transition">
+                <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                <span class="text-[10px]">右移</span>
+            </button>
+            <button id="tool-outward" class="tool-btn flex flex-col items-center justify-center w-11 py-1 rounded-lg text-stone-600 disabled:opacity-35 transition">
+                <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+                <span class="text-[10px]">外移</span>
+            </button>
+            <button id="tool-inward" class="tool-btn flex flex-col items-center justify-center w-11 py-1 rounded-lg text-stone-600 disabled:opacity-35 transition">
+                <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                <span class="text-[10px]">內移</span>
+            </button>
+            <button id="tool-flip" class="tool-btn flex flex-col items-center justify-center w-11 py-1 rounded-lg text-stone-600 disabled:opacity-35 transition">
+                <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span class="text-[10px]">翻轉</span>
+            </button>
+            <button id="tool-duplicate" class="tool-btn flex flex-col items-center justify-center w-11 py-1 rounded-lg text-stone-600 disabled:opacity-35 transition">
+                <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="text-[10px]">複製</span>
+            </button>
+            <button id="tool-delete" class="tool-btn flex flex-col items-center justify-center w-11 py-1 rounded-lg text-rose-500 disabled:opacity-35 transition">
+                <span class="w-4 h-4 mb-0.5 rounded-full bg-rose-500 text-white flex items-center justify-center text-[10px] font-bold">✕</span>
+                <span class="text-[10px]">刪除</span>
+            </button>
+            <button id="tool-clear" class="tool-btn flex flex-col items-center justify-center w-11 py-1 rounded-lg text-stone-600 disabled:opacity-35 transition">
+                <span class="w-4 h-4 mb-0.5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </span>
+                <span class="text-[10px]">清空</span>
+            </button>
+        </div>
+
+        <!-- ================= BOTTOM 30-ITEM CATALOG PANEL ================= -->
+        <section class="bg-white h-[40%] min-h-[235px] max-h-[320px] flex flex-col shrink-0 z-10">
+            <!-- Top Category Tabs + Search -->
+            <div class="px-3 pt-2 pb-1.5 border-b border-stone-100 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-5 overflow-x-auto no-scrollbar" id="main-category-tabs">
+                    <button data-cat="beads" class="cat-tab relative pb-1.5 text-sm font-bold text-stone-900 whitespace-nowrap">
+                        珠子 <span class="text-[11px] font-normal text-stone-400">15</span>
+                        <span class="tab-indicator absolute bottom-0 left-0 right-0 h-0.5 bg-stone-900 rounded-full"></span>
+                    </button>
+                    <button data-cat="spacers" class="cat-tab relative pb-1.5 text-sm font-medium text-stone-400 hover:text-stone-700 whitespace-nowrap">
+                        配飾 <span class="text-[11px] font-normal text-stone-400">10</span>
+                        <span class="tab-indicator hidden absolute bottom-0 left-0 right-0 h-0.5 bg-stone-900 rounded-full"></span>
+                    </button>
+                    <button data-cat="charms" class="cat-tab relative pb-1.5 text-sm font-medium text-stone-400 hover:text-stone-700 whitespace-nowrap">
+                        吊墜 <span class="text-[11px] font-normal text-stone-400">5</span>
+                        <span class="tab-indicator hidden absolute bottom-0 left-0 right-0 h-0.5 bg-stone-900 rounded-full"></span>
+                    </button>
+                    <button data-cat="presets" class="cat-tab relative pb-1.5 text-sm font-medium text-stone-400 hover:text-stone-700 whitespace-nowrap">
+                        水晶靈感款 ✨
+                        <span class="tab-indicator hidden absolute bottom-0 left-0 right-0 h-0.5 bg-stone-900 rounded-full"></span>
+                    </button>
+                </div>
+
+                <!-- Search input toggle -->
+                <div class="flex items-center gap-1.5">
+                    <div class="relative">
+                        <input id="catalog-search" type="text" placeholder="搜尋珠子..." class="w-24 focus:w-32 transition-all bg-stone-100 text-xs rounded-full pl-6 pr-2.5 py-1 text-stone-700 focus:outline-none focus:ring-1 focus:ring-amber-500" />
+                        <svg class="w-3.5 h-3.5 text-stone-400 absolute left-2 top-1.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catalog Body: Left Sub-Category Sidebar + Right 3-Col Grid -->
+            <div class="flex-1 flex overflow-hidden">
+                <!-- Left Sub-Navigation -->
+                <aside id="sub-category-sidebar" class="w-20 bg-stone-50/90 border-r border-stone-100 overflow-y-auto no-scrollbar flex flex-col py-1 shrink-0">
+                    <!-- Populated dynamically by JS -->
+                </aside>
+
+                <!-- Right Product Grid -->
+                <div id="catalog-grid" class="flex-1 p-2.5 overflow-y-auto thin-scrollbar grid grid-cols-3 gap-2 content-start">
+                    <!-- Populated dynamically by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= STEP 1 MODAL: GENDER & WRIST SIZE SETUP ================= -->
+        <div id="wrist-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+            <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden border border-stone-100 animate-fadeIn">
+                <!-- Modal Header -->
+                <div class="bg-gradient-to-r from-stone-900 via-stone-800 to-stone-900 text-white p-5 relative">
+                    <div class="text-[11px] uppercase tracking-widest text-amber-300/90 font-semibold">STEP 1 · 專屬定製起點</div>
+                    <h2 class="text-lg font-bold mt-0.5 serif-font">選擇佩帶對象與手圍尺寸</h2>
+                    <p class="text-xs text-stone-300 mt-1">系統將根據您的淨手圍，自動計算最舒適的串珠內徑</p>
+                    <button id="btn-close-wrist-modal" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white">
+                        ✕
+                    </button>
+                </div>
+
+                <div class="p-5 space-y-5">
+                    <!-- Gender Quick Presets -->
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-2">1. 選擇款式 / 性別推薦手圍</label>
+                        <div class="grid grid-cols-3 gap-2.5" id="gender-preset-group">
+                            <button type="button" data-gender="female" data-wrist="15.0" class="gender-btn border-2 border-amber-600 bg-amber-50/70 rounded-2xl p-3 flex flex-col items-center text-center transition">
+                                <span class="text-xl mb-1">👩🏻</span>
+                                <span class="text-xs font-bold text-stone-900">女仕標準</span>
+                                <span class="text-[11px] text-amber-700 font-semibold mt-0.5">15.0 cm</span>
+                            </button>
+                            <button type="button" data-gender="male" data-wrist="17.5" class="gender-btn border border-stone-200 hover:border-stone-300 bg-white rounded-2xl p-3 flex flex-col items-center text-center transition">
+                                <span class="text-xl mb-1">👨🏻</span>
+                                <span class="text-xs font-bold text-stone-900">男仕標準</span>
+                                <span class="text-[11px] text-stone-500 font-semibold mt-0.5">17.5 cm</span>
+                            </button>
+                            <button type="button" data-gender="petite" data-wrist="13.5" class="gender-btn border border-stone-200 hover:border-stone-300 bg-white rounded-2xl p-3 flex flex-col items-center text-center transition">
+                                <span class="text-xl mb-1">✨</span>
+                                <span class="text-xs font-bold text-stone-900">纖細手圍</span>
+                                <span class="text-[11px] text-stone-500 font-semibold mt-0.5">13.5 cm</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Precise Wrist Slider & Input -->
+                    <div class="bg-stone-50 p-3.5 rounded-2xl border border-stone-200/70">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-xs font-bold text-stone-700">2. 精準淨手圍微調 (cm)</label>
+                            <div class="flex items-center gap-1.5">
+                                <button id="wrist-minus" class="w-6 h-6 rounded-full bg-white border border-stone-300 text-stone-700 font-bold text-xs flex items-center justify-center active:scale-90">-</button>
+                                <span id="modal-wrist-display" class="text-base font-bold text-amber-700 min-w-[56px] text-center">15.0 cm</span>
+                                <button id="wrist-plus" class="w-6 h-6 rounded-full bg-white border border-stone-300 text-stone-700 font-bold text-xs flex items-center justify-center active:scale-90">+</button>
+                            </div>
+                        </div>
+                        <input id="wrist-slider" type="range" min="12.0" max="21.0" step="0.5" value="15.0" class="w-full accent-amber-600 cursor-pointer" />
+                        <div class="flex justify-between text-[10px] text-stone-400 mt-1">
+                            <span>12.0cm (孩童/極細)</span>
+                            <span>16.5cm (適中)</span>
+                            <span>21.0cm (寬鬆男款)</span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Starter Option -->
+                    <div class="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3 text-xs text-stone-700 space-y-2">
+                        <div class="font-bold text-amber-900 flex items-center gap-1">
+                            <span>💡 串珠小幫手</span>
+                        </div>
+                        <p class="text-[11px] text-stone-600 leading-relaxed">
+                            我們已為您預載一款人氣「招財黃瑪瑙配彎刀銀珠」示範手串，您可直接修改或清空從零開始。
+                        </p>
+                    </div>
+
+                    <!-- Confirm Buttons -->
+                    <div class="flex gap-2.5 pt-1">
+                        <button id="btn-start-empty" class="w-1/3 py-3 rounded-xl border border-stone-300 text-xs font-semibold text-stone-700 hover:bg-stone-100 active:scale-95 transition">
+                            空白開始
+                        </button>
+                        <button id="btn-confirm-wrist" class="w-2/3 py-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold shadow-md active:scale-95 transition">
+                            確認手圍並開始設計
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= STEP 3 MODAL: EXPORT PHOTO, QUOTE & SHIPIA.CO CHECKOUT ================= -->
+        <div id="quote-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 overflow-y-auto">
+            <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-stone-200 my-auto max-h-[92dvh] flex flex-col">
+                <!-- Modal Top Header -->
+                <div class="px-5 py-3.5 bg-stone-900 text-white flex items-center justify-between shrink-0">
+                    <div>
+                        <span class="text-[10px] uppercase tracking-wider text-amber-300 block">專屬定製預覽與報價</span>
+                        <h3 class="text-sm font-bold">您的雲晶手串設計已完成</h3>
+                    </div>
+                    <button id="btn-close-quote-modal" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-sm">
+                        ✕
+                    </button>
+                </div>
+
+                <!-- Scrollable Content: Generated Image + BOM + Actions -->
+                <div class="p-4 overflow-y-auto thin-scrollbar space-y-4 flex-1 bg-stone-50">
+                    <!-- Generated High-Res Image Preview -->
+                    <div class="bg-white p-2.5 rounded-2xl shadow-sm border border-stone-200/80 flex flex-col items-center">
+                        <img id="exported-quote-img" alt="手串專屬設計圖" class="w-full rounded-xl border border-stone-100 shadow-xs" />
+                        <div class="mt-2 flex items-center justify-between w-full px-1">
+                            <span class="text-[11px] text-stone-400">📲 長按上方圖片或點擊下方按鈕儲存</span>
+                            <button id="btn-download-png" class="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1 bg-amber-50 px-2.5 py-1 rounded-full">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                <span>下載高清圖</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Pricing Breakdown Card -->
+                    <div class="bg-white rounded-2xl p-3.5 border border-stone-200/80 space-y-2">
+                        <div class="flex items-center justify-between border-b border-stone-100 pb-2">
+                            <span class="text-xs font-bold text-stone-700">定製編號 <span id="quote-order-id" class="font-mono text-stone-500">#YJ-8821</span></span>
+                            <span id="quote-wrist-spec" class="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">女仕 · 目標手圍 15.0cm</span>
+                        </div>
+                        <div id="quote-bom-list" class="space-y-1.5 max-h-32 overflow-y-auto thin-scrollbar text-xs text-stone-600 py-1">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="border-t border-stone-100 pt-2 flex items-baseline justify-between">
+                            <span class="text-xs font-bold text-stone-800">預計結帳總價 (含日本彈力線與禮盒)</span>
+                            <span id="quote-total-price" class="text-lg font-extrabold text-amber-700">HK$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sticky Footer CTA: Move to Shipia.co to pay -->
+                <div class="p-4 bg-white border-t border-stone-200 space-y-2 shrink-0">
+                    <div class="flex gap-2">
+                        <button id="btn-copy-recipe" class="w-1/3 py-3 px-2 rounded-xl border border-stone-300 hover:bg-stone-50 text-xs font-semibold text-stone-700 flex items-center justify-center gap-1 active:scale-95 transition">
+                            <span>📋 複製配方</span>
+                        </button>
+                        <button id="btn-pay-shipia" class="w-2/3 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 text-white text-xs font-bold shadow-lg shadow-amber-600/25 flex items-center justify-center gap-1.5 active:scale-95 transition">
+                            <span>前往 Shipia.co 立即付款</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-center text-stone-400">點擊將自動複製您的定製配方編號並跳轉至 Shipia.co 安全結帳頁面</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SHIPIA.CO HANDOFF CONFIRMATION MODAL ================= -->
+        <div id="shipia-modal" class="hidden fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-4">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-5 shadow-2xl border border-stone-100 text-center space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center text-2xl font-bold">
+                    ✓
+                </div>
+                <div>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full">配方已自動複製</span>
+                    <h4 class="text-base font-bold text-stone-900 mt-2">即將前往 Shipia.co 完成付款</h4>
+                    <p class="text-xs text-stone-500 mt-1 leading-relaxed">
+                        您的定製單號 <span id="shipia-order-code" class="font-mono font-bold text-stone-800">#YJ-8821</span> 與用料明細已複製到剪貼簿，在 Shipia.co 結帳備註貼上即可。
+                    </p>
+                </div>
+                <div class="bg-stone-50 rounded-2xl p-3 text-left text-xs space-y-1 border border-stone-200/70">
+                    <div class="flex justify-between"><span class="text-stone-400">商戶結帳平台：</span><span class="font-semibold text-stone-800">Shipia.co</span></div>
+                    <div class="flex justify-between"><span class="text-stone-400">應付總額：</span><span id="shipia-amount" class="font-bold text-amber-700">HK$106.00</span></div>
+                </div>
+                <div class="flex gap-2">
+                    <button id="btn-cancel-shipia" class="w-1/3 py-2.5 rounded-xl border border-stone-200 text-xs font-semibold text-stone-600">返回修改</button>
+                    <a id="link-go-shipia" href="https://shipia.co" target="_blank" rel="noopener noreferrer" class="w-2/3 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold flex items-center justify-center gap-1">
+                        <span>打開 Shipia.co 結帳</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= NON-INTRUSIVE TOAST NOTIFICATION ================= -->
+        <div id="toast" class="pointer-events-none fixed top-16 left-1/2 -translate-x-1/2 z-50 opacity-0 transition-all duration-300 transform -translate-y-2 bg-stone-900/90 backdrop-blur text-white text-xs font-medium px-4 py-2 rounded-full shadow-lg">
+            已加入手珠
+        </div>
+
+    </div>
+
+    <script>
+        /********************************************************************
+         * 1. 30 DISTINCT BEADS, SPACERS & CHARMS CATALOG DATA
+         * Includes realistic procedural rendering parameters for crystals,
+         * rutilated quartz, agates, gold/silver spacers, and cute pendants.
+         ********************************************************************/
+        const CATALOG_ITEMS = [
+            // ==================== 珠子 BEADS (15 款) ====================
+            {
+                id: 'b01', name: '黃瑪瑙', category: 'beads', sub: '瑪瑙·玉石',
+                sizeMm: 10, weightG: 1.4, price: 8,
+                color1: '#F6B93B', color2: '#B86B00', highlight: '#FFF6D6',
+                style: 'agate', desc: '溫潤飽滿招財黃瑪瑙'
+            },
+            {
+                id: 'b02', name: '黃瑪瑙(小)', category: 'beads', sub: '瑪瑙·玉石',
+                sizeMm: 8, weightG: 0.85, price: 6,
+                color1: '#F8C44F', color2: '#C27400', highlight: '#FFF6D6',
+                style: 'agate', desc: '精緻百搭小尺寸黃瑪瑙'
+            },
+            {
+                id: 'b03', name: '紅粉兔毛', category: 'beads', sub: '髮晶·兔毛',
+                sizeMm: 12, weightG: 2.3, price: 32,
+                color1: '#F59E94', color2: '#A8383B', highlight: '#FFEAE8',
+                style: 'rutilated', desc: '細密柔順紅粉兔毛水晶'
+            },
+            {
+                id: 'b04', name: '紅兔毛', category: 'beads', sub: '髮晶·兔毛',
+                sizeMm: 10, weightG: 1.4, price: 25,
+                color1: '#E66767', color2: '#8B2626', highlight: '#FFD8D8',
+                style: 'rutilated', desc: '旺人緣氣血紅兔毛水晶'
+            },
+            {
+                id: 'b05', name: '黑髮晶', category: 'beads', sub: '髮晶·兔毛',
+                sizeMm: 8, weightG: 0.9, price: 18,
+                color1: '#D5D8DC', color2: '#2C3E50', highlight: '#FFFFFF',
+                style: 'black_rutile', desc: '避邪防小人領袖石'
+            },
+            {
+                id: 'b06', name: '金髮晶(鈦晶)', category: 'beads', sub: '髮晶·兔毛',
+                sizeMm: 10, weightG: 1.45, price: 38,
+                color1: '#F9E79F', color2: '#B7950B', highlight: '#FFFFF0',
+                style: 'gold_rutile', desc: '正財偏財雙收金絲鈦晶'
+            },
+            {
+                id: 'b07', name: '巴西紫水晶', category: 'beads', sub: '紫晶·粉晶',
+                sizeMm: 10, weightG: 1.4, price: 22,
+                color1: '#C39BD3', color2: '#5B2C6F', highlight: '#F5EEF8',
+                style: 'crystal', desc: '智慧貴人高透紫水晶'
+            },
+            {
+                id: 'b08', name: '薰衣草紫晶', category: 'beads', sub: '紫晶·粉晶',
+                sizeMm: 8, weightG: 0.85, price: 15,
+                color1: '#D7BDE2', color2: '#884EA0', highlight: '#FDEDEC',
+                style: 'crystal', desc: '柔和仙氣淺紫水晶'
+            },
+            {
+                id: 'b09', name: '馬達加斯加粉晶', category: 'beads', sub: '紫晶·粉晶',
+                sizeMm: 10, weightG: 1.4, price: 20,
+                color1: '#F7B7C4', color2: '#C4687B', highlight: '#FFF0F3',
+                style: 'milky_crystal', desc: '招桃花人緣冰種粉晶'
+            },
+            {
+                id: 'b10', name: '白水晶(極光透)', category: 'beads', sub: '紫晶·粉晶',
+                sizeMm: 10, weightG: 1.4, price: 12,
+                color1: '#ECF0F1', color2: '#95A5A6', highlight: '#FFFFFF',
+                style: 'clear_quartz', desc: '純淨百搭淨化白水晶'
+            },
+            {
+                id: 'b11', name: '酒紅石榴石', category: 'beads', sub: '招財·金曜',
+                sizeMm: 8, weightG: 1.1, price: 10,
+                color1: '#922B21', color2: '#4A0E0E', highlight: '#F5B7B1',
+                style: 'crystal', desc: '濃郁紫牙烏酒紅石榴石'
+            },
+            {
+                id: 'b12', name: '酒紅石榴石(大)', category: 'beads', sub: '招財·金曜',
+                sizeMm: 10, weightG: 1.65, price: 16,
+                color1: '#A93226', color2: '#3B0909', highlight: '#FADBD8',
+                style: 'crystal', desc: '顯白氣質大顆石榴石'
+            },
+            {
+                id: 'b13', name: '冰種海藍寶', category: 'beads', sub: '瑪瑙·玉石',
+                sizeMm: 9, weightG: 1.15, price: 35,
+                color1: '#A3E4D7', color2: '#2874A6', highlight: '#E8F8F5',
+                style: 'crystal', desc: '清澈海洋藍溝通之石'
+            },
+            {
+                id: 'b14', name: '奶油月光石', category: 'beads', sub: '紫晶·粉晶',
+                sizeMm: 8, weightG: 0.9, price: 28,
+                color1: '#F8F9F9', color2: '#85C1E9', highlight: '#D6EAF8',
+                style: 'moonstone', desc: '藍光閃爍戀人月光石'
+            },
+            {
+                id: 'b15', name: '金曜石(貓眼)', category: 'beads', sub: '招財·金曜',
+                sizeMm: 10, weightG: 1.45, price: 18,
+                color1: '#3E3832', color2: '#111111', highlight: '#F5CBA7',
+                style: 'gold_obsidian', desc: '雙金眼護身招財金曜石'
+            },
+
+            // ==================== 配飾 SPACERS (10 款) ====================
+            {
+                id: 's01', name: '彎刀南瓜珠銀色', category: 'spacers', sub: '隔珠·南瓜珠',
+                sizeMm: 6, weightG: 0.35, price: 2.5,
+                color1: '#F2F4F4', color2: '#7F8C8D', highlight: '#FFFFFF',
+                style: 'silver_pumpkin', desc: '立體螺旋銀色彎刀隔珠'
+            },
+            {
+                id: 's02', name: '彎刀南瓜珠金色', category: 'spacers', sub: '隔珠·南瓜珠',
+                sizeMm: 6, weightG: 0.35, price: 3.0,
+                color1: '#F9E79F', color2: '#B7950B', highlight: '#FFFFF0',
+                style: 'gold_pumpkin', desc: '14K包金保色南瓜隔珠'
+            },
+            {
+                id: 's03', name: '金色不規則小隔片', category: 'spacers', sub: '切面隔片',
+                sizeMm: 2, weightG: 0.12, price: 1.5,
+                color1: '#F7DC6F', color2: '#9A7D0A', highlight: '#FFFDE7',
+                style: 'gold_disc', desc: '纖薄百搭金色隔片'
+            },
+            {
+                id: 's04', name: '銀色不規則小隔片', category: 'spacers', sub: '切面隔片',
+                sizeMm: 2, weightG: 0.12, price: 1.5,
+                color1: '#E5E7E9', color2: '#707B7C', highlight: '#FFFFFF',
+                style: 'silver_disc', desc: '純銀質感細緻隔片'
+            },
+            {
+                id: 's05', name: '紫水晶切面片', category: 'spacers', sub: '切面隔片',
+                sizeMm: 4, weightG: 0.3, price: 8,
+                color1: '#AF7AC5', color2: '#512E5F', highlight: '#EBDEF0',
+                style: 'gem_wheel', desc: '閃耀鑽切面紫水晶算盤珠'
+            },
+            {
+                id: 's06', name: '藏銀六字真言', category: 'spacers', sub: '藏銀·沙金',
+                sizeMm: 10, weightG: 1.1, price: 6,
+                color1: '#BDC3C7', color2: '#2C3E50', highlight: '#ECF0F1',
+                style: 'mantra_barrel', desc: '復古浮雕六字真言桶珠'
+            },
+            {
+                id: 's07', name: '法螺小蓮花', category: 'spacers', sub: '藏銀·沙金',
+                sizeMm: 8, weightG: 0.65, price: 5,
+                color1: '#D7DBDD', color2: '#566573', highlight: '#FFFFFF',
+                style: 'lotus_spacer', desc: '立體雕花蓮花隔珠'
+            },
+            {
+                id: 's08', name: '捕夢網金粉色', category: 'spacers', sub: '隔珠·南瓜珠',
+                sizeMm: 10, weightG: 0.9, price: 9,
+                color1: '#F5CBA7', color2: '#C0392B', highlight: '#FDEDEC',
+                style: 'dreamcatcher', desc: '微鑲粉鑽金色花環珠'
+            },
+            {
+                id: 's09', name: '捕夢網白金色', category: 'spacers', sub: '隔珠·南瓜珠',
+                sizeMm: 10, weightG: 0.9, price: 9,
+                color1: '#EAEDED', color2: '#7F8C8D', highlight: '#FFFFFF',
+                style: 'dreamcatcher_silver', desc: '微鑲白鑽銀色花環珠'
+            },
+            {
+                id: 's10', name: '金色小圓珠', category: 'spacers', sub: '隔珠·南瓜珠',
+                sizeMm: 4, weightG: 0.25, price: 2,
+                color1: '#FAD7A0', color2: '#B9770E', highlight: '#FEF9E7',
+                style: 'gold_ball', desc: '14K包金點綴小金珠'
+            },
+
+            // ==================== 吊墜 CHARMS (5 款) ====================
+            {
+                id: 'c01', name: '沙金蝴蝶結萌貓', category: 'charms', sub: '萌寵·福袋',
+                sizeMm: 12, weightG: 1.4, price: 22,
+                color1: '#F8C471', color2: '#B7950B', highlight: '#FEF9E7',
+                style: 'charm_kitty', desc: '人氣立體蝴蝶結小貓金飾'
+            },
+            {
+                id: 'c02', name: '招財納福小福袋', category: 'charms', sub: '萌寵·福袋',
+                sizeMm: 8, weightG: 0.95, price: 12,
+                color1: '#F7DC6F', color2: '#9A7D0A', highlight: '#FFFDE7',
+                style: 'charm_fudai', desc: '立體福字黃金色小福袋'
+            },
+            {
+                id: 'c03', name: '純銀鑲鑽小梅花', category: 'charms', sub: '花朵·仙氣',
+                sizeMm: 8, weightG: 0.75, price: 10,
+                color1: '#F2F4F4', color2: '#909497', highlight: '#FFFFFF',
+                style: 'charm_flower', desc: '溫婉粉蕊純銀五瓣梅花'
+            },
+            {
+                id: 'c04', name: '平安如意小福牌', category: 'charms', sub: '萌寵·福袋',
+                sizeMm: 7, weightG: 0.7, price: 8,
+                color1: '#E5E7E9', color2: '#5D6D7E', highlight: '#FFFFFF',
+                style: 'charm_tag', desc: '雙面祈福純銀質感吊牌'
+            },
+            {
+                id: 'c05', name: '藏銀守護天使翼', category: 'charms', sub: '花朵·仙氣',
+                sizeMm: 12, weightG: 1.2, price: 16,
+                color1: '#D5D8DC', color2: '#566573', highlight: '#FFFFFF',
+                style: 'charm_wing', desc: '立體羽毛紋理守護之翼'
+            }
+        ];
+
+        // Preset Inspiration Bracelets (水晶靈感款)
+        const PRESET_DESIGNS = [
+            {
+                id: 'p01',
+                name: '雲晶爆款 · 招財萌貓黃瑪瑙',
+                desc: '參考影片同款：14顆黃瑪瑙 + 6顆銀色南瓜珠 + 沙金萌貓與小福袋',
+                recipe: ['b01','s01','b01','s01','b01','s01','c02','b01','s01','b01','s01','b01','s01','c01','b01','b01','b01','b01','b01','b01','b01','b01']
+            },
+            {
+                id: 'p02',
+                name: '桃花滿溢 · 紅粉兔毛冰粉晶',
+                desc: '溫柔顯白女款：馬達加斯加粉晶配紅粉兔毛與小梅花吊墜',
+                recipe: ['b09','s03','b03','s03','b09','b09','s08','b09','b09','s03','b03','s03','b09','c03','b09','b09']
+            },
+            {
+                id: 'p03',
+                name: '智慧貴人 · 薰衣草紫晶月光',
+                desc: '氣質仙氣款：巴西紫水晶、奶油月光石與銀色彎刀隔珠',
+                recipe: ['b07','s01','b14','b08','b14','s01','b07','s04','c04','s04','b07','s01','b14','b08','b14','s01']
+            },
+            {
+                id: 'p04',
+                name: '沉穩護身 · 黑髮晶金曜男仕款',
+                desc: '經典中性/男仕款：貓眼金曜石配黑髮晶與藏銀六字真言',
+                recipe: ['b15','b05','s04','b06','s04','b05','b15','b15','s06','b15','b15','b05','s04','b06','s04','b05','b15']
+            }
+        ];
+
+        const SUB_CATEGORIES = {
+            beads: ['全部', '瑪瑙·玉石', '髮晶·兔毛', '紫晶·粉晶', '招財·金曜'],
+            spacers: ['全部', '隔珠·南瓜珠', '切面隔片', '藏銀·沙金'],
+            charms: ['全部', '萌寵·福袋', '花朵·仙氣'],
+            presets: ['推薦組合']
+        };
+
+        /********************************************************************
+         * 2. APPLICATION STATE
+         ********************************************************************/
+        const state = {
+            gender: 'female',
+            targetWristCm: 15.0,
+            currentCategory: 'beads',
+            currentSubCategory: '全部',
+            searchQuery: '',
+            // Bracelet array: each item is { uid, itemId, radialOffset, flipped }
+            bracelet: [],
+            selectedUid: null,
+            // Dragging state on canvas
+            draggingUid: null,
+            dragPointerPos: null,
+            isDraggingOutside: false,
+            uidCounter: 1
+        };
+
+        // Helper to lookup catalog item by ID
+        function getCatalogItem(itemId) {
+            return CATALOG_ITEMS.find(i => i.id === itemId);
+        }
+
+        /********************************************************************
+         * 3. REALISTIC PROCEDURAL BEAD & CHARM RENDERER (Canvas 2D)
+         * Draws crystal translucency, rutilated needles, pumpkin grooves,
+         * and cute 3D charms both on the main circular canvas and thumbnails!
+         ********************************************************************/
+        function drawBeadGraphic(ctx, item, x, y, radiusPx, rotationRad = 0, flipped = false) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rotationRad + (flipped ? Math.PI : 0));
+
+            const style = item.style;
+            const r = Math.max(radiusPx, 4);
+
+            // Drop shadow under every bead
+            ctx.save();
+            ctx.shadowColor = 'rgba(35, 28, 20, 0.22)';
+            ctx.shadowBlur = r * 0.45;
+            ctx.shadowOffsetY = r * 0.16;
+
+            if (style === 'silver_disc' || style === 'gold_disc' || style === 'gem_wheel') {
+                // Thin spacer disc oriented along the string tangent
+                const w = style === 'gem_wheel' ? r * 0.72 : r * 0.42;
+                const h = r * 1.65;
+                const grad = ctx.createLinearGradient(-w, -h/2, w, h/2);
+                grad.addColorStop(0, item.highlight);
+                grad.addColorStop(0.35, item.color1);
+                grad.addColorStop(0.8, item.color2);
+                grad.addColorStop(1, item.color1);
+                ctx.fillStyle = grad;
+                roundRect(ctx, -w/2, -h/2, w, h, w * 0.45);
+                ctx.fill();
+                ctx.restore();
+
+                // Facet lines
+                ctx.strokeStyle = 'rgba(255,255,255,0.65)';
+                ctx.lineWidth = 0.8;
+                for (let fy = -h * 0.3; fy <= h * 0.3; fy += h * 0.3) {
+                    ctx.beginPath();
+                    ctx.moveTo(-w*0.4, fy);
+                    ctx.lineTo(w*0.4, fy);
+                    ctx.stroke();
+                }
+                ctx.restore();
+                return;
+            }
+
+            if (style === 'silver_pumpkin' || style === 'gold_pumpkin') {
+                // Scalloped curved blade pumpkin spacer (彎刀南瓜珠)
+                const w = r * 0.95;
+                const h = r * 1.78;
+                const lobes = 5;
+                ctx.beginPath();
+                ctx.roundRect(-w/2, -h/2, w, h, w*0.45);
+                const baseGrad = ctx.createLinearGradient(0, -h/2, 0, h/2);
+                baseGrad.addColorStop(0, item.color2);
+                baseGrad.addColorStop(0.25, item.highlight);
+                baseGrad.addColorStop(0.5, item.color1);
+                baseGrad.addColorStop(0.8, item.color2);
+                baseGrad.addColorStop(1, item.color1);
+                ctx.fillStyle = baseGrad;
+                ctx.fill();
+                ctx.restore();
+
+                // Draw curved grooves like the video's 彎刀南瓜珠
+                for (let i = -2; i <= 2; i++) {
+                    const ly = (i / 2.5) * (h * 0.42);
+                    ctx.beginPath();
+                    ctx.moveTo(-w * 0.46, ly - 1.5);
+                    ctx.quadraticCurveTo(0, ly + 2.5, w * 0.46, ly - 1.5);
+                    ctx.strokeStyle = item.color2;
+                    ctx.lineWidth = Math.max(1.1, r * 0.11);
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.moveTo(-w * 0.42, ly - 2.5);
+                    ctx.quadraticCurveTo(0, ly + 1.2, w * 0.42, ly - 2.5);
+                    ctx.strokeStyle = item.highlight;
+                    ctx.lineWidth = Math.max(0.8, r * 0.07);
+                    ctx.stroke();
+                }
+                ctx.restore();
+                return;
+            }
+
+            if (style === 'charm_kitty') {
+                // Cute Gold Kitty Head with Bow (沙金蝴蝶結萌貓)
+                ctx.beginPath();
+                ctx.ellipse(0, r * 0.08, r * 1.05, r * 0.88, 0, 0, Math.PI * 2);
+                // Left & right ears
+                ctx.moveTo(-r * 0.85, -r * 0.35);
+                ctx.lineTo(-r * 0.72, -r * 0.98);
+                ctx.lineTo(-r * 0.2, -r * 0.68);
+                ctx.moveTo(r * 0.85, -r * 0.35);
+                ctx.lineTo(r * 0.72, -r * 0.98);
+                ctx.lineTo(r * 0.2, -r * 0.68);
+                const kGrad = ctx.createRadialGradient(-r*0.25, -r*0.2, r*0.1, 0, 0, r*1.2);
+                kGrad.addColorStop(0, '#FFFDF0');
+                kGrad.addColorStop(0.35, '#F9D976');
+                kGrad.addColorStop(0.8, '#D49B27');
+                kGrad.addColorStop(1, '#8E620A');
+                ctx.fillStyle = kGrad;
+                ctx.fill();
+                ctx.restore();
+
+                // Cute Eyes & Nose
+                ctx.fillStyle = '#4A3208';
+                ctx.beginPath();
+                ctx.arc(-r * 0.42, r * 0.12, r * 0.09, 0, Math.PI * 2);
+                ctx.arc(r * 0.42, r * 0.12, r * 0.09, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#E6A100';
+                ctx.beginPath();
+                ctx.ellipse(0, r * 0.22, r * 0.11, r * 0.08, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Iconic Bow on top-right ear
+                ctx.save();
+                ctx.translate(r * 0.45, -r * 0.55);
+                ctx.rotate(0.25);
+                ctx.fillStyle = '#E59838';
+                ctx.strokeStyle = '#8E5B10';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.ellipse(-r*0.22, 0, r*0.22, r*0.15, -0.2, 0, Math.PI*2);
+                ctx.ellipse(r*0.22, 0, r*0.22, r*0.15, 0.2, 0, Math.PI*2);
+                ctx.fill();
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(0, 0, r*0.11, 0, Math.PI*2);
+                ctx.fillStyle = '#FFF5C0';
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+
+                ctx.restore();
+                return;
+            }
+
+            if (style === 'charm_fudai' || style === 'charm_flower' || style === 'charm_tag' || style === 'charm_wing') {
+                // Hanging bail ring at top (-x direction toward bracelet center)
+                ctx.fillStyle = item.color2;
+                ctx.beginPath();
+                ctx.arc(0, -r * 0.92, r * 0.22, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Body of the charm
+                const cGrad = ctx.createRadialGradient(-r*0.25, -r*0.1, r*0.1, 0, r*0.2, r*1.1);
+                cGrad.addColorStop(0, item.highlight);
+                cGrad.addColorStop(0.45, item.color1);
+                cGrad.addColorStop(1, item.color2);
+                ctx.fillStyle = cGrad;
+
+                if (style === 'charm_fudai') {
+                    // Lucky bag shape
+                    ctx.beginPath();
+                    ctx.arc(0, r * 0.25, r * 0.78, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                    // '福' emblem dot
+                    ctx.fillStyle = '#B87300';
+                    ctx.font = `bold ${Math.max(8, Math.round(r * 0.75))}px sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('福', 0, r * 0.28);
+                } else if (style === 'charm_flower') {
+                    // 5-petal silver flower
+                    for (let p = 0; p < 5; p++) {
+                        const a = (p * Math.PI * 2) / 5;
+                        ctx.beginPath();
+                        ctx.arc(Math.cos(a)*r*0.42, r*0.15 + Math.sin(a)*r*0.42, r*0.38, 0, Math.PI*2);
+                        ctx.fill();
+                    }
+                    ctx.restore();
+                    ctx.beginPath();
+                    ctx.arc(0, r*0.15, r*0.24, 0, Math.PI*2);
+                    ctx.fillStyle = '#F5B7B1';
+                    ctx.fill();
+                } else if (style === 'charm_tag') {
+                    // Rectangular rounded plaque
+                    roundRect(ctx, -r*0.52, -r*0.65, r*1.04, r*1.5, r*0.25);
+                    ctx.fill();
+                    ctx.restore();
+                    ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+                    ctx.lineWidth = 1;
+                    roundRect(ctx, -r*0.36, -r*0.48, r*0.72, r*1.15, r*0.15);
+                    ctx.stroke();
+                } else {
+                    // Angel wing
+                    ctx.beginPath();
+                    ctx.ellipse(0, r*0.15, r*0.58, r*0.95, 0.2, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+                ctx.restore();
+                return;
+            }
+
+            // Standard Round / Barrel Bead (Crystals, Agates, Rutilated, Mantra, Dreamcatcher)
+            ctx.beginPath();
+            ctx.arc(0, 0, r, 0, Math.PI * 2);
+
+            const grad = ctx.createRadialGradient(-r * 0.32, -r * 0.32, r * 0.08, 0, 0, r);
+            grad.addColorStop(0, item.highlight);
+            grad.addColorStop(0.35, item.color1);
+            grad.addColorStop(0.88, item.color2);
+            grad.addColorStop(1, shadeColor(item.color2, -18));
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.restore(); // Remove drop shadow for internal inclusions
+
+            // Clip to circle for internal textures
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(0, 0, r, 0, Math.PI * 2);
+            ctx.clip();
+
+            // Internal texture by style
+            if (style === 'rutilated' || style === 'black_rutile' || style === 'gold_rutile') {
+                // Fine needle/hair inclusions (髮晶 / 兔毛)
+                const strokeCol = style === 'black_rutile' ? 'rgba(20,25,30,0.65)' :
+                                  style === 'gold_rutile' ? 'rgba(212,172,13,0.75)' :
+                                  'rgba(185,50,50,0.45)';
+                ctx.strokeStyle = strokeCol;
+                ctx.lineWidth = Math.max(0.8, r * 0.07);
+                const coords = [
+                    [-0.7, -0.4, 0.8, 0.2],
+                    [-0.5, 0.6, 0.7, -0.5],
+                    [-0.2, -0.8, 0.4, 0.8],
+                    [-0.8, 0.1, 0.5, 0.6],
+                    [-0.3, 0.7, 0.8, -0.2]
+                ];
+                coords.forEach(([x1, y1, x2, y2]) => {
+                    ctx.beginPath();
+                    ctx.moveTo(x1 * r, y1 * r);
+                    ctx.quadraticCurveTo(0, (y1 + y2) * 0.3 * r, x2 * r, y2 * r);
+                    ctx.stroke();
+                });
+            } else if (style === 'agate' || style === 'crystal' || style === 'clear_quartz') {
+                // Subtle internal glow / band
+                const innerGlow = ctx.createRadialGradient(r * 0.22, r * 0.25, r * 0.05, r * 0.15, r * 0.2, r * 0.7);
+                innerGlow.addColorStop(0, 'rgba(255, 235, 170, 0.45)');
+                innerGlow.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                ctx.fillStyle = innerGlow;
+                ctx.fillRect(-r, -r, r * 2, r * 2);
+            } else if (style === 'moonstone' || style === 'gold_obsidian') {
+                // Sheen band (藍月光 / 金曜貓眼)
+                const sheenCol = style === 'moonstone' ? 'rgba(133, 193, 233, 0.55)' : 'rgba(245, 203, 167, 0.5)';
+                const sheen = ctx.createLinearGradient(-r, -r, r, r);
+                sheen.addColorStop(0.3, 'rgba(255,255,255,0)');
+                sheen.addColorStop(0.5, sheenCol);
+                sheen.addColorStop(0.7, 'rgba(255,255,255,0)');
+                ctx.fillStyle = sheen;
+                ctx.fillRect(-r, -r, r * 2, r * 2);
+            } else if (style === 'mantra_barrel' || style === 'lotus_spacer' || style === 'dreamcatcher' || style === 'dreamcatcher_silver') {
+                // Metallic carved details
+                ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+                ctx.lineWidth = Math.max(1, r * 0.12);
+                ctx.beginPath();
+                ctx.arc(0, 0, r * 0.55, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // Glassy top-left specular reflection highlight (crucial for realistic 3D crystal look!)
+            ctx.beginPath();
+            ctx.ellipse(-r * 0.34, -r * 0.34, r * 0.28, r * 0.16, -Math.PI / 4, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.78)';
+            ctx.fill();
+
+            // Tiny secondary dot highlight
+            ctx.beginPath();
+            ctx.arc(-r * 0.12, -r * 0.52, r * 0.07, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.fill();
+
+            ctx.restore();
+            ctx.restore();
+        }
+
+        function roundRect(ctx, x, y, w, h, radius) {
+            ctx.beginPath();
+            ctx.roundRect(x, y, w, h, radius);
+        }
+
+        function shadeColor(col, amt) {
+            let usePound = false;
+            if (col[0] === "#") {
+                col = col.slice(1);
+                usePound = true;
+            }
+            const num = parseInt(col, 16);
+            let r = (num >> 16) + amt;
+            r = Math.max(Math.min(255, r), 0);
+            let b = ((num >> 8) & 0x00FF) + amt;
+            b = Math.max(Math.min(255, b), 0);
+            let g = (num & 0x0000FF) + amt;
+            g = Math.max(Math.min(255, g), 0);
+            return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16).padStart(6, '0');
+        }
+
+        /********************************************************************
+         * 4. BRACELET GEOMETRY, CIRCUMFERENCE & LAYOUT ENGINE
+         ********************************************************************/
+        const canvas = document.getElementById('bracelet-canvas');
+        const ctx = canvas.getContext('2d');
+        let canvasMetrics = { width: 360, height: 320, centerX: 180, centerY: 160, baseRadiusPx: 98, pxPerMm: 3.1 };
+
+        // Computes each bead's angle and screen position along the circular string
+        function computeBraceletLayout(customWidth, customHeight, customCenterX, customCenterY, customScale = 1) {
+            const w = customWidth || canvasMetrics.width;
+            const h = customHeight || canvasMetrics.height;
+            const cx = customCenterX !== undefined ? customCenterX : w / 2;
+            const cy = customCenterY !== undefined ? customCenterY : h / 2;
+
+            const minDim = Math.min(w, h);
+            // Scale pxPerMm so a 10mm bead looks crisp and proportional (around 16-18px radius)
+            const pxPerMm = (minDim / 108) * customScale;
+
+            // Calculate total bead span in mm
+            let totalCordMm = 0;
+            const itemSpans = state.bracelet.map(entry => {
+                const item = getCatalogItem(entry.itemId);
+                // Thin spacers & pumpkins take less linear cord space along the string
+                let spanMm = item.sizeMm;
+                if (item.style.includes('disc')) spanMm = 2.4;
+                else if (item.style.includes('pumpkin')) spanMm = 5.2;
+                else if (item.style === 'gem_wheel') spanMm = 4.5;
+                else if (item.category === 'charms' && item.style !== 'charm_kitty') spanMm = 5.5;
+                totalCordMm += spanMm;
+                return { entry, item, spanMm };
+            });
+
+            // Determine circle radius in pixels: grows gracefully with more beads, with a comfortable minimum
+            const minCircleRadiusPx = minDim * 0.27;
+            const maxCircleRadiusPx = minDim * 0.37;
+            const naturalRadiusPx = (totalCordMm * pxPerMm) / (2 * Math.PI);
+            const ringRadiusPx = Math.max(minCircleRadiusPx, Math.min(maxCircleRadiusPx, naturalRadiusPx));
+
+            // If bracelet is partially filled, pack beads evenly or contiguously;
+            // In reference video, beads always form a closed ring or expand around the circle seamlessly!
+            const totalSpan = Math.max(totalCordMm, 1);
+            let currentAngle = -Math.PI / 2; // Start at 12 o'clock
+
+            const nodes = itemSpans.map(({ entry, item, spanMm }) => {
+                const deltaAngle = (spanMm / totalSpan) * (Math.PI * 2);
+                const midAngle = currentAngle + deltaAngle / 2;
+                currentAngle += deltaAngle;
+
+                // Charms default to hanging slightly outside the ring if radialOffset isn't set
+                const defaultOutward = (item.category === 'charms' && item.style !== 'charm_kitty') ? 10 : 0;
+                const radialShift = ((entry.radialOffset || 0) + defaultOutward) * customScale;
+                const rDist = ringRadiusPx + radialShift;
+
+                const x = cx + Math.cos(midAngle) * rDist;
+                const y = cy + Math.sin(midAngle) * rDist;
+                const visualRadiusPx = (item.sizeMm * 0.52) * pxPerMm;
+
+                return {
+                    uid: entry.uid,
+                    entry,
+                    item,
+                    angle: midAngle,
+                    x,
+                    y,
+                    r: visualRadiusPx,
+                    ringRadiusPx
+                };
+            });
+
+            return { cx, cy, ringRadiusPx, pxPerMm, totalCordMm, nodes };
+        }
+
+        // Render the entire canvas (Watermark + Cord + Beads + Selection Ring)
+        function renderWorkbench() {
+            const w = canvasMetrics.width;
+            const h = canvasMetrics.height;
+            ctx.clearRect(0, 0, w, h);
+
+            const layout = computeBraceletLayout();
+            const { cx, cy, ringRadiusPx, nodes } = layout;
+
+            // 1. Draw Center Brand Cloud Watermark ("雲晶 LUMIÈRE" - inspired by video's 云晶 cloud icon)
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.strokeStyle = '#DDD8CE';
+            ctx.lineWidth = 1.6;
+            // Cute cloud outline
+            ctx.beginPath();
+            ctx.arc(-14, 2, 11, Math.PI * 0.5, Math.PI * 1.45);
+            ctx.arc(-3, -7, 13, Math.PI * 1.1, Math.PI * 1.95);
+            ctx.arc(13, -3, 11, Math.PI * 1.4, Math.PI * 0.45);
+            ctx.arc(16, 6, 8, Math.PI * 1.7, Math.PI * 0.5);
+            ctx.closePath();
+            ctx.stroke();
+
+            // Little sparkle inside cloud
+            ctx.fillStyle = '#D5CFC3';
+            ctx.font = '500 13px "Noto Serif TC", serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('雲 晶', 0, 28);
+            ctx.font = '400 9px sans-serif';
+            ctx.fillText('LUMIÈRE', 0, 40);
+            ctx.restore();
+
+            // 2. Draw Elastic Cord Circle
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(cx, cy, ringRadiusPx, 0, Math.PI * 2);
+            ctx.strokeStyle = state.bracelet.length === 0 ? '#D6D1C7' : 'rgba(180, 165, 140, 0.55)';
+            ctx.lineWidth = state.bracelet.length === 0 ? 1.5 : 2.2;
+            if (state.bracelet.length === 0) {
+                ctx.setLineDash([5, 5]);
+            }
+            ctx.stroke();
+            ctx.restore();
+
+            // Empty state hint on canvas
+            if (state.bracelet.length === 0) {
+                ctx.save();
+                ctx.fillStyle = '#A8A29E';
+                ctx.font = '500 12px "Noto Sans TC", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('點擊下方珠子或「✨ 一鍵填滿手圍」開始串珠', cx, cy + ringRadiusPx + 32);
+                ctx.restore();
+                return;
+            }
+
+            // 3. Draw Beads in layered order (Spacers first, then Main Beads, then Charms on top)
+            const sortedForDraw = [...nodes].sort((a, b) => {
+                const order = { spacers: 1, beads: 2, charms: 3 };
+                return (order[a.item.category] || 2) - (order[b.item.category] || 2);
+            });
+
+            sortedForDraw.forEach(node => {
+                const isBeingDragged = node.uid === state.draggingUid;
+                const drawX = (isBeingDragged && state.dragPointerPos) ? state.dragPointerPos.x : node.x;
+                const drawY = (isBeingDragged && state.dragPointerPos) ? state.dragPointerPos.y : node.y;
+                // Tangent rotation so spacers & charms align naturally with the circle
+                const rot = node.angle + Math.PI / 2;
+
+                ctx.save();
+                if (isBeingDragged) {
+                    ctx.scale(1.03, 1.03);
+                }
+                drawBeadGraphic(ctx, node.item, drawX, drawY, node.r, rot, node.entry.flipped);
+                ctx.restore();
+            });
+
+            // 4. Draw Selection Ring & Directional Arrows around Selected Bead (just like the video!)
+            const selectedNode = nodes.find(n => n.uid === state.selectedUid);
+            if (selectedNode) {
+                const sx = (selectedNode.uid === state.draggingUid && state.dragPointerPos) ? state.dragPointerPos.x : selectedNode.x;
+                const sy = (selectedNode.uid === state.draggingUid && state.dragPointerPos) ? state.dragPointerPos.y : selectedNode.y;
+                const sr = Math.max(selectedNode.r + 7, 16);
+
+                ctx.save();
+                ctx.translate(sx, sy);
+                ctx.beginPath();
+                ctx.arc(0, 0, sr, 0, Math.PI * 2);
+                ctx.strokeStyle = '#6B7280';
+                ctx.lineWidth = 1.4;
+                ctx.setLineDash([4, 3]);
+                ctx.stroke();
+
+                // Small 4-way indicator ticks on the dashed circle
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#4B5563';
+                [0, Math.PI/2, Math.PI, Math.PI*1.5].forEach(ang => {
+                    const tx = Math.cos(ang) * sr;
+                    const ty = Math.sin(ang) * sr;
+                    ctx.beginPath();
+                    ctx.arc(tx, ty, 2.2, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                ctx.restore();
+            }
+        }
+
+        /********************************************************************
+         * 5. LIVE METRICS CALCULATION (WRIST CM, PRICE, WEIGHT, PROGRESS)
+         ********************************************************************/
+        function updateMetricsUI() {
+            let totalCordMm = 0;
+            let totalPrice = 0;
+            let totalWeight = 0;
+
+            state.bracelet.forEach(entry => {
+                const item = getCatalogItem(entry.itemId);
+                if (!item) return;
+                // Cord contribution in mm (matching video where each 10mm bead adds ~1cm)
+                let spanMm = item.sizeMm;
+                if (item.style.includes('disc')) spanMm = 1.5;
+                else if (item.style.includes('pumpkin')) spanMm = 4.5;
+                else if (item.category === 'charms' && item.style !== 'charm_kitty') spanMm = 3.0;
+
+                totalCordMm += spanMm;
+                totalPrice += item.price;
+                totalWeight += item.weightG;
+            });
+
+            // Convert to cm
+            const currentWristCm = totalCordMm / 10;
+            document.getElementById('live-wrist-cm').textContent = currentWristCm.toFixed(2);
+            document.getElementById('live-price').textContent = `HK$${totalPrice.toFixed(2)}`;
+            document.getElementById('live-weight').textContent = `${totalWeight.toFixed(2)}g`;
+            document.getElementById('live-count').textContent = `${state.bracelet.length}顆`;
+            document.getElementById('header-target-wrist').textContent = `${state.targetWristCm.toFixed(1)}cm`;
+
+            // Progress toward target wrist size
+            const pct = Math.min(100, Math.round((currentWristCm / state.targetWristCm) * 100));
+            const progressBar = document.getElementById('wrist-progress-bar');
+            const progressText = document.getElementById('wrist-progress-text');
+            const fitBadge = document.getElementById('wrist-fit-badge');
+
+            progressBar.style.width = `${pct}%`;
+            progressText.textContent = `${pct}%`;
+
+            const diff = currentWristCm - state.targetWristCm;
+            if (state.bracelet.length === 0) {
+                fitBadge.textContent = '未串珠';
+                fitBadge.className = 'ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-stone-100 text-stone-500 font-medium';
+                progressBar.className = 'h-full bg-stone-400 transition-all duration-300';
+            } else if (Math.abs(diff) <= 0.8) {
+                fitBadge.textContent = '✓ 完美貼合';
+                fitBadge.className = 'ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold';
+                progressBar.className = 'h-full bg-emerald-500 transition-all duration-300';
+            } else if (diff < -0.8) {
+                fitBadge.textContent = `還差 ${Math.abs(diff).toFixed(1)}cm`;
+                fitBadge.className = 'ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium';
+                progressBar.className = 'h-full bg-amber-500 transition-all duration-300';
+            } else {
+                fitBadge.textContent = `偏大 +${diff.toFixed(1)}cm`;
+                fitBadge.className = 'ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-700 font-medium';
+                progressBar.className = 'h-full bg-rose-500 transition-all duration-300';
+            }
+
+            // Update Selected Bead Pill & Toolbar buttons
+            const selectedPill = document.getElementById('selected-bead-pill');
+            const selectedEntry = state.bracelet.find(b => b.uid === state.selectedUid);
+            const hasSelection = Boolean(selectedEntry);
+
+            if (hasSelection) {
+                const item = getCatalogItem(selectedEntry.itemId);
+                document.getElementById('selected-bead-name').textContent = `${item.name} (${item.sizeMm}mm)`;
+                document.getElementById('selected-bead-price').textContent = `HK$${item.price}`;
+                selectedPill.classList.remove('hidden');
+            } else {
+                selectedPill.classList.add('hidden');
+            }
+
+            ['tool-left', 'tool-right', 'tool-outward', 'tool-inward', 'tool-flip', 'tool-duplicate', 'tool-delete'].forEach(btnId => {
+                document.getElementById(btnId).disabled = !hasSelection;
+            });
+            document.getElementById('tool-clear').disabled = state.bracelet.length === 0;
+        }
+
+        /********************************************************************
+         * 6. CATALOG UI RENDERING (30 ITEMS WITH CANVAS THUMBNAILS)
+         ********************************************************************/
+        function renderSubCategories() {
+            const sidebar = document.getElementById('sub-category-sidebar');
+            const subs = SUB_CATEGORIES[state.currentCategory] || ['全部'];
+            sidebar.innerHTML = '';
+
+            subs.forEach(subName => {
+                const active = state.currentSubCategory === subName;
+                const btn = document.createElement('button');
+                btn.className = `w-full py-3 px-1.5 text-xs text-center transition relative ${
+                    active ? 'bg-white font-bold text-stone-900' : 'text-stone-500 hover:text-stone-800'
+                }`;
+                btn.innerHTML = `
+                    ${active ? '<span class="absolute left-0 top-2.5 bottom-2.5 w-1 bg-amber-600 rounded-r-full"></span>' : ''}
+                    <span>${subName}</span>
+                `;
+                btn.addEventListener('click', () => {
+                    state.currentSubCategory = subName;
+                    renderSubCategories();
+                    renderCatalogGrid();
+                });
+                sidebar.appendChild(btn);
+            });
+        }
+
+        function renderCatalogGrid() {
+            const grid = document.getElementById('catalog-grid');
+            grid.innerHTML = '';
+
+            // If Preset Inspiration tab is selected
+            if (state.currentCategory === 'presets') {
+                grid.className = 'flex-1 p-2.5 overflow-y-auto thin-scrollbar grid grid-cols-1 gap-2.5 content-start';
+                PRESET_DESIGNS.forEach(preset => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-stone-50 hover:bg-amber-50/40 border border-stone-200/90 rounded-2xl p-3 flex items-center justify-between gap-3 transition cursor-pointer';
+                    card.innerHTML = `
+                        <div class="space-y-1">
+                            <div class="text-xs font-bold text-stone-900">${preset.name}</div>
+                            <p class="text-[11px] text-stone-500 leading-snug">${preset.desc}</p>
+                        </div>
+                        <button class="shrink-0 bg-stone-900 text-white text-[11px] font-semibold px-3 py-1.5 rounded-full active:scale-95">
+                            套用此款
+                        </button>
+                    `;
+                    card.addEventListener('click', () => {
+                        loadPresetRecipe(preset.recipe, preset.name);
+                    });
+                    grid.appendChild(card);
+                });
+                return;
+            }
+
+            grid.className = 'flex-1 p-2.5 overflow-y-auto thin-scrollbar grid grid-cols-3 gap-2 content-start';
+
+            const filtered = CATALOG_ITEMS.filter(item => {
+                if (item.category !== state.currentCategory) return false;
+                if (state.currentSubCategory !== '全部' && item.sub !== state.currentSubCategory) return false;
+                if (state.searchQuery.trim() !== '') {
+                    const q = state.searchQuery.trim().toLowerCase();
+                    return item.name.toLowerCase().includes(q) || item.sub.toLowerCase().includes(q);
+                }
+                return true;
+            });
+
+            filtered.forEach(item => {
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.className = 'bead-card bg-white hover:bg-stone-50 border border-stone-200/75 rounded-2xl p-2 flex flex-col items-center text-center transition shadow-2xs relative group';
+
+                // Create mini canvas for crisp realistic thumbnail
+                const thumbCanvas = document.createElement('canvas');
+                thumbCanvas.width = 96;
+                thumbCanvas.height = 76;
+                thumbCanvas.className = 'w-14 h-11 mb-1 pointer-events-none';
+                const tCtx = thumbCanvas.getContext('2d');
+                const visualR = item.sizeMm <= 4 ? 16 : item.sizeMm <= 8 ? 21 : 25;
+                // Rotate spacers slightly so they show off their profile in the catalog card
+                const previewRot = (item.category === 'spacers') ? -0.45 : 0;
+                drawBeadGraphic(tCtx, item, 48, 38, visualR, previewRot, false);
+
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'text-[11px] font-medium text-stone-800 truncate w-full';
+                titleDiv.textContent = item.name;
+
+                const metaDiv = document.createElement('div');
+                metaDiv.className = 'flex items-baseline justify-center gap-1.5 mt-0.5 w-full';
+                metaDiv.innerHTML = `
+                    <span class="text-[11px] font-bold text-stone-900">HK$${item.price.toFixed(1)}</span>
+                    <span class="text-[10px] text-stone-400">${item.sizeMm}mm</span>
+                `;
+
+                card.appendChild(thumbCanvas);
+                card.appendChild(titleDiv);
+                card.appendChild(metaDiv);
+
+                card.addEventListener('click', () => {
+                    addBeadToBracelet(item.id);
+                });
+
+                grid.appendChild(card);
+            });
+        }
+
+        /********************************************************************
+         * 7. BRACELET ACTIONS (ADD, REORDER, FINE-TUNE, AUTO-FILL)
+         ********************************************************************/
+        function addBeadToBracelet(itemId) {
+            const newEntry = {
+                uid: `bead_${state.uidCounter++}`,
+                itemId,
+                radialOffset: 0,
+                flipped: false
+            };
+
+            // If user currently has a bead selected, insert right after the selected bead (super convenient!)
+            const selIdx = state.bracelet.findIndex(b => b.uid === state.selectedUid);
+            if (selIdx !== -1) {
+                state.bracelet.splice(selIdx + 1, 0, newEntry);
+            } else {
+                state.bracelet.push(newEntry);
+            }
+
+            state.selectedUid = newEntry.uid;
+            updateMetricsUI();
+            renderWorkbench();
+        }
+
+        function loadPresetRecipe(recipeIds, label) {
+            state.bracelet = recipeIds.map(itemId => ({
+                uid: `bead_${state.uidCounter++}`,
+                itemId,
+                radialOffset: 0,
+                flipped: false
+            }));
+            state.selectedUid = state.bracelet[0]?.uid || null;
+            updateMetricsUI();
+            renderWorkbench();
+            showToast(`已載入「${label}」`);
+        }
+
+        // Auto-fill remaining target wrist size with currently selected or default main bead
+        document.getElementById('btn-auto-fill').addEventListener('click', () => {
+            let fillItemId = 'b01'; // Default Yellow Agate 10mm
+            const selectedEntry = state.bracelet.find(b => b.uid === state.selectedUid);
+            if (selectedEntry) {
+                fillItemId = selectedEntry.itemId;
+            } else if (state.bracelet.length > 0) {
+                fillItemId = state.bracelet[state.bracelet.length - 1].itemId;
+            }
+
+            const item = getCatalogItem(fillItemId);
+            let currentMm = state.bracelet.reduce((sum, e) => sum + (getCatalogItem(e.itemId)?.sizeMm || 8), 0);
+            const targetMm = state.targetWristCm * 10;
+
+            if (currentMm >= targetMm) {
+                showToast('目前已達到目標手圍尺寸！');
+                return;
+            }
+
+            let added = 0;
+            while (currentMm + item.sizeMm * 0.6 <= targetMm && state.bracelet.length < 45) {
+                state.bracelet.push({
+                    uid: `bead_${state.uidCounter++}`,
+                    itemId: fillItemId,
+                    radialOffset: 0,
+                    flipped: false
+                });
+                currentMm += item.sizeMm;
+                added++;
+            }
+
+            if (added > 0) {
+                state.selectedUid = state.bracelet[state.bracelet.length - 1].uid;
+                updateMetricsUI();
+                renderWorkbench();
+                showToast(`✨ 已自動補齊 ${added} 顆「${item.name}」`);
+            }
+        });
+
+        // Fine-tuning Toolbar Controls
+        document.getElementById('tool-left').addEventListener('click', () => {
+            const idx = state.bracelet.findIndex(b => b.uid === state.selectedUid);
+            if (idx === -1 || state.bracelet.length < 2) return;
+            const prevIdx = (idx - 1 + state.bracelet.length) % state.bracelet.length;
+            const temp = state.bracelet[idx];
+            state.bracelet[idx] = state.bracelet[prevIdx];
+            state.bracelet[prevIdx] = temp;
+            renderWorkbench();
+        });
+
+        document.getElementById('tool-right').addEventListener('click', () => {
+            const idx = state.bracelet.findIndex(b => b.uid === state.selectedUid);
+            if (idx === -1 || state.bracelet.length < 2) return;
+            const nextIdx = (idx + 1) % state.bracelet.length;
+            const temp = state.bracelet[idx];
+            state.bracelet[idx] = state.bracelet[nextIdx];
+            state.bracelet[nextIdx] = temp;
+            renderWorkbench();
+        });
+
+        document.getElementById('tool-outward').addEventListener('click', () => {
+            const entry = state.bracelet.find(b => b.uid === state.selectedUid);
+            if (!entry) return;
+            entry.radialOffset = Math.min(22, (entry.radialOffset || 0) + 4);
+            renderWorkbench();
+        });
+
+        document.getElementById('tool-inward').addEventListener('click', () => {
+            const entry = state.bracelet.find(b => b.uid === state.selectedUid);
+            if (!entry) return;
+            entry.radialOffset = Math.max(-16, (entry.radialOffset || 0) - 4);
+            renderWorkbench();
+        });
+
+        document.getElementById('tool-flip').addEventListener('click', () => {
+            const entry = state.bracelet.find(b => b.uid === state.selectedUid);
+            if (!entry) return;
+            entry.flipped = !entry.flipped;
+            renderWorkbench();
+        });
+
+        document.getElementById('tool-duplicate').addEventListener('click', () => {
+            const idx = state.bracelet.findIndex(b => b.uid === state.selectedUid);
+            if (idx === -1) return;
+            const orig = state.bracelet[idx];
+            const copy = {
+                uid: `bead_${state.uidCounter++}`,
+                itemId: orig.itemId,
+                radialOffset: orig.radialOffset,
+                flipped: orig.flipped
+            };
+            state.bracelet.splice(idx + 1, 0, copy);
+            state.selectedUid = copy.uid;
+            updateMetricsUI();
+            renderWorkbench();
+            showToast('已複製手珠');
+        });
+
+        document.getElementById('tool-delete').addEventListener('click', () => {
+            const idx = state.bracelet.findIndex(b => b.uid === state.selectedUid);
+            if (idx === -1) return;
+            state.bracelet.splice(idx, 1);
+            state.selectedUid = state.bracelet[Math.min(idx, state.bracelet.length - 1)]?.uid || null;
+            updateMetricsUI();
+            renderWorkbench();
+        });
+
+        document.getElementById('tool-clear').addEventListener('click', () => {
+            state.bracelet = [];
+            state.selectedUid = null;
+            updateMetricsUI();
+            renderWorkbench();
+            showToast('已清空手串畫布');
+        });
+
+        /********************************************************************
+         * 8. CANVAS POINTER INTERACTION (SELECT, DRAG REORDER, DRAG-OUT DELETE)
+         ********************************************************************/
+        function getCanvasLocalPoint(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function handlePointerDown(e) {
+            const pt = getCanvasLocalPoint(e);
+            const layout = computeBraceletLayout();
+
+            // Find topmost bead under pointer
+            for (let i = layout.nodes.length - 1; i >= 0; i--) {
+                const node = layout.nodes[i];
+                const dist = Math.hypot(pt.x - node.x, pt.y - node.y);
+                if (dist <= Math.max(node.r + 8, 18)) {
+                    state.selectedUid = node.uid;
+                    state.draggingUid = node.uid;
+                    state.dragPointerPos = pt;
+                    state.isDraggingOutside = false;
+                    updateMetricsUI();
+                    renderWorkbench();
+                    return;
+                }
+            }
+
+            // Clicked empty space: deselect
+            state.selectedUid = null;
+            updateMetricsUI();
+            renderWorkbench();
+        }
+
+        function handlePointerMove(e) {
+            if (!state.draggingUid) return;
+            e.preventDefault();
+            const pt = getCanvasLocalPoint(e);
+            state.dragPointerPos = pt;
+
+            const layout = computeBraceletLayout();
+            const distFromCenter = Math.hypot(pt.x - layout.cx, pt.y - layout.cy);
+
+            // Check if dragged far outside or inside to delete
+            const deleteHint = document.getElementById('delete-zone-hint');
+            if (distFromCenter > layout.ringRadiusPx + 62 || distFromCenter < layout.ringRadiusPx - 58) {
+                state.isDraggingOutside = true;
+                deleteHint.classList.remove('hidden');
+            } else {
+                state.isDraggingOutside = false;
+                deleteHint.classList.add('hidden');
+
+                // Reorder bead smoothly based on pointer angle around center!
+                let pointerAngle = Math.atan2(pt.y - layout.cy, pt.x - layout.cx);
+                // Normalize angle relative to -PI/2 (12 o'clock)
+                let normAngle = pointerAngle - (-Math.PI / 2);
+                if (normAngle < 0) normAngle += Math.PI * 2;
+
+                const targetIdx = Math.min(
+                    state.bracelet.length - 1,
+                    Math.floor((normAngle / (Math.PI * 2)) * state.bracelet.length)
+                );
+                const currentIdx = state.bracelet.findIndex(b => b.uid === state.draggingUid);
+                if (currentIdx !== -1 && targetIdx !== -1 && currentIdx !== targetIdx) {
+                    const [moved] = state.bracelet.splice(currentIdx, 1);
+                    state.bracelet.splice(targetIdx, 0, moved);
+                }
+            }
+
+            renderWorkbench();
+        }
+
+        function handlePointerUp() {
+            if (!state.draggingUid) return;
+            const deleteHint = document.getElementById('delete-zone-hint');
+            deleteHint.classList.add('hidden');
+
+            if (state.isDraggingOutside) {
+                const idx = state.bracelet.findIndex(b => b.uid === state.draggingUid);
+                if (idx !== -1) {
+                    const removedItem = getCatalogItem(state.bracelet[idx].itemId);
+                    state.bracelet.splice(idx, 1);
+                    state.selectedUid = state.bracelet[0]?.uid || null;
+                    showToast(`已移除「${removedItem?.name || '手珠'}」`);
+                }
+            }
+
+            state.draggingUid = null;
+            state.dragPointerPos = null;
+            state.isDraggingOutside = false;
+            updateMetricsUI();
+            renderWorkbench();
+        }
+
+        canvas.addEventListener('mousedown', handlePointerDown);
+        window.addEventListener('mousemove', handlePointerMove, { passive: false });
+        window.addEventListener('mouseup', handlePointerUp);
+
+        canvas.addEventListener('touchstart', handlePointerDown, { passive: true });
+        window.addEventListener('touchmove', handlePointerMove, { passive: false });
+        window.addEventListener('touchend', handlePointerUp);
+
+        /********************************************************************
+         * 9. HIGH-RES PHOTO GENERATOR & BOM QUOTE BUILDER (STEP 3)
+         ********************************************************************/
+        function generateQuoteCardAndOpenModal() {
+            if (state.bracelet.length === 0) {
+                showToast('請先加入至少一顆手珠再生成報價單！');
+                return;
+            }
+
+            const orderId = `#YJ-${Math.floor(1000 + Math.random() * 9000)}`;
+            document.getElementById('quote-order-id').textContent = orderId;
+            document.getElementById('shipia-order-code').textContent = orderId;
+
+            // Group BOM items
+            const bomMap = new Map();
+            let totalPrice = 0;
+            let totalWeight = 0;
+            let totalCordMm = 0;
+
+            state.bracelet.forEach(entry => {
+                const item = getCatalogItem(entry.itemId);
+                if (!item) return;
+                totalPrice += item.price;
+                totalWeight += item.weightG;
+                let spanMm = item.sizeMm;
+                if (item.style.includes('disc')) spanMm = 1.5;
+                else if (item.style.includes('pumpkin')) spanMm = 4.5;
+                else if (item.category === 'charms' && item.style !== 'charm_kitty') spanMm = 3.0;
+                totalCordMm += spanMm;
+
+                const existing = bomMap.get(item.id) || { item, count: 0, subtotal: 0 };
+                existing.count += 1;
+                existing.subtotal += item.price;
+                bomMap.set(item.id, existing);
+            });
+
+            const wristCm = (totalCordMm / 10).toFixed(2);
+            const genderLabel = state.gender === 'male' ? '男仕款' : state.gender === 'petite' ? '纖細款' : '女仕款';
+            document.getElementById('quote-wrist-spec').textContent = `${genderLabel} · 手圍 ${wristCm}cm (目標 ${state.targetWristCm.toFixed(1)}cm)`;
+            document.getElementById('quote-total-price').textContent = `HK$${totalPrice.toFixed(2)}`;
+            document.getElementById('shipia-amount').textContent = `HK$${totalPrice.toFixed(2)}`;
+
+            // Populate BOM HTML list
+            const bomListEl = document.getElementById('quote-bom-list');
+            bomListEl.innerHTML = '';
+            const bomArray = Array.from(bomMap.values());
+            bomArray.forEach(({ item, count, subtotal }) => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between text-xs';
+                row.innerHTML = `
+                    <span>• ${item.name} <span class="text-stone-400">(${item.sizeMm}mm)</span> × <b>${count}</b></span>
+                    <span class="font-semibold text-stone-800">HK$${subtotal.toFixed(1)}</span>
+                `;
+                bomListEl.appendChild(row);
+            });
+
+            // Create High-Res Offscreen Canvas (800 x 1000) for downloadable design card
+            const expCanvas = document.createElement('canvas');
+            expCanvas.width = 800;
+            expCanvas.height = 1000;
+            const eCtx = expCanvas.getContext('2d');
+
+            // Card Background
+            eCtx.fillStyle = '#F8F7F4';
+            eCtx.fillRect(0, 0, 800, 1000);
+
+            // Ornamental Border
+            eCtx.strokeStyle = '#DFD9CE';
+            eCtx.lineWidth = 3;
+            eCtx.strokeRect(28, 28, 744, 944);
+
+            // Top Brand Header
+            eCtx.fillStyle = '#1F1E1C';
+            eCtx.font = 'bold 30px "Noto Serif TC", serif';
+            eCtx.textAlign = 'center';
+            eCtx.fillText('雲 晶 LUMIÈRE · 專屬手串定製單', 400, 88);
+
+            eCtx.fillStyle = '#8C8275';
+            eCtx.font = '400 18px "Noto Sans TC", sans-serif';
+            const todayStr = new Date().toISOString().slice(0, 10);
+            eCtx.fillText(`定製編號：${orderId}   |   日期：${todayStr}`, 400, 122);
+
+            // Draw Bracelet in Center Showcase Box
+            eCtx.save();
+            eCtx.fillStyle = '#FFFFFF';
+            roundRect(eCtx, 60, 150, 680, 490, 28);
+            eCtx.fill();
+            eCtx.strokeStyle = '#EAE5DC';
+            eCtx.lineWidth = 2;
+            eCtx.stroke();
+            eCtx.restore();
+
+            // Center Watermark inside export box
+            eCtx.fillStyle = '#D8D2C5';
+            eCtx.font = '500 22px "Noto Serif TC", serif';
+            eCtx.textAlign = 'center';
+            eCtx.fillText('雲 晶', 400, 395);
+            eCtx.font = '400 13px sans-serif';
+            eCtx.fillText('LUMIÈRE CRYSTAL', 400, 416);
+
+            // Compute bracelet layout specifically for the 800x1000 export canvas
+            const expLayout = computeBraceletLayout(520, 440, 400, 395, 1.05);
+            eCtx.save();
+            eCtx.beginPath();
+            eCtx.arc(400, 395, expLayout.ringRadiusPx, 0, Math.PI * 2);
+            eCtx.strokeStyle = 'rgba(180, 165, 140, 0.55)';
+            eCtx.lineWidth = 3.5;
+            eCtx.stroke();
+            eCtx.restore();
+
+            const sortedExportNodes = [...expLayout.nodes].sort((a, b) => {
+                const order = { spacers: 1, beads: 2, charms: 3 };
+                return (order[a.item.category] || 2) - (order[b.item.category] || 2);
+            });
+            sortedExportNodes.forEach(node => {
+                drawBeadGraphic(eCtx, node.item, node.x, node.y, node.r, node.angle + Math.PI / 2, node.entry.flipped);
+            });
+
+            // Specs Pill Bar
+            eCtx.fillStyle = '#2B2927';
+            roundRect(eCtx, 60, 665, 680, 72, 18);
+            eCtx.fill();
+
+            eCtx.fillStyle = '#FFFFFF';
+            eCtx.font = 'bold 22px "Noto Sans TC", sans-serif';
+            eCtx.textAlign = 'left';
+            eCtx.fillText(`適用手圍：${wristCm} cm (${state.bracelet.length}顆 · ${totalWeight.toFixed(1)}g)`, 90, 710);
+
+            eCtx.fillStyle = '#F6B93B';
+            eCtx.font = 'bold 26px "Noto Sans TC", sans-serif';
+            eCtx.textAlign = 'right';
+            eCtx.fillText(`預計總價 HK$${totalPrice.toFixed(2)}`, 710, 711);
+
+            // BOM Recipe Section on Image
+            eCtx.fillStyle = '#4A453E';
+            eCtx.font = 'bold 19px "Noto Sans TC", sans-serif';
+            eCtx.textAlign = 'left';
+            eCtx.fillText('【用料配方明細 BOM】', 64, 778);
+
+            eCtx.font = '400 17px "Noto Sans TC", sans-serif';
+            eCtx.fillStyle = '#57534E';
+            const maxItemsShown = 8;
+            bomArray.slice(0, maxItemsShown).forEach((entry, idx) => {
+                const col = idx % 2;
+                const row = Math.floor(idx / 2);
+                const xPos = col === 0 ? 70 : 415;
+                const yPos = 812 + row * 30;
+                eCtx.fillText(`• ${entry.item.name} (${entry.item.sizeMm}mm) × ${entry.count}   HK$${entry.subtotal.toFixed(0)}`, xPos, yPos);
+            });
+
+            // Footer note
+            eCtx.fillStyle = '#9C9488';
+            eCtx.font = '400 15px "Noto Sans TC", sans-serif';
+            eCtx.textAlign = 'center';
+            eCtx.fillText('憑此設計圖於 Shipia.co 結帳付款，雲晶工坊將為您手工穿製並附贈消磁水晶禮盒', 400, 952);
+
+            const dataUrl = expCanvas.toDataURL('image/png');
+            document.getElementById('exported-quote-img').src = dataUrl;
+
+            // Store text recipe for clipboard copy
+            state.lastOrderSummaryText = [
+                `【雲晶 LUMIÈRE 定製手串訂單 ${orderId}】`,
+                `適用對象：${genderLabel} | 完成手圍：${wristCm}cm (目標 ${state.targetWristCm.toFixed(1)}cm)`,
+                `總珠數：${state.bracelet.length}顆 | 預計重量：${totalWeight.toFixed(1)}g`,
+                `用料配方：`,
+                ...bomArray.map(e => `- ${e.item.name} (${e.item.sizeMm}mm) x ${e.count} = HK$${e.subtotal.toFixed(1)}`),
+                `預計結帳總額：HK$${totalPrice.toFixed(2)}`,
+                `結帳連結：https://shipia.co`
+            ].join('\n');
+
+            document.getElementById('quote-modal').classList.remove('hidden');
+        }
+
+        function copyTextToClipboard(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                console.error(err);
+            }
+            document.body.removeChild(ta);
+        }
+
+        /********************************************************************
+         * 10. EVENT LISTENERS & INITIALIZATION
+         ********************************************************************/
+        // Resize Canvas cleanly
+        function resizeCanvas() {
+            const container = document.getElementById('canvas-container');
+            const rect = container.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            canvasMetrics.width = rect.width;
+            canvasMetrics.height = rect.height;
+            renderWorkbench();
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        // Main Category Tabs
+        document.querySelectorAll('.cat-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.cat-tab').forEach(t => {
+                    t.classList.remove('font-bold', 'text-stone-900');
+                    t.classList.add('font-medium', 'text-stone-400');
+                    t.querySelector('.tab-indicator').classList.add('hidden');
+                });
+                tab.classList.add('font-bold', 'text-stone-900');
+                tab.classList.remove('font-medium', 'text-stone-400');
+                tab.querySelector('.tab-indicator').classList.remove('hidden');
+
+                state.currentCategory = tab.dataset.cat;
+                state.currentSubCategory = SUB_CATEGORIES[state.currentCategory][0];
+                renderSubCategories();
+                renderCatalogGrid();
+            });
+        });
+
+        // Search input
+        document.getElementById('catalog-search').addEventListener('input', e => {
+            state.searchQuery = e.target.value;
+            renderCatalogGrid();
+        });
+
+        // Dismiss tip banner
+        document.getElementById('btn-close-tip').addEventListener('click', () => {
+            document.getElementById('tip-banner').classList.add('hidden');
+            setTimeout(resizeCanvas, 20);
+        });
+
+        // Step 1 Wrist Modal Controls
+        const wristModal = document.getElementById('wrist-modal');
+        const wristSlider = document.getElementById('wrist-slider');
+        const modalWristDisplay = document.getElementById('modal-wrist-display');
+
+        function setModalWristValue(val) {
+            const clamped = Math.max(12.0, Math.min(21.0, Math.round(val * 2) / 2));
+            state.targetWristCm = clamped;
+            wristSlider.value = clamped;
+            modalWristDisplay.textContent = `${clamped.toFixed(1)} cm`;
+            updateMetricsUI();
+        }
+
+        document.querySelectorAll('.gender-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.gender-btn').forEach(b => {
+                    b.className = 'gender-btn border border-stone-200 hover:border-stone-300 bg-white rounded-2xl p-3 flex flex-col items-center text-center transition';
+                });
+                btn.className = 'gender-btn border-2 border-amber-600 bg-amber-50/70 rounded-2xl p-3 flex flex-col items-center text-center transition';
+                state.gender = btn.dataset.gender;
+                setModalWristValue(parseFloat(btn.dataset.wrist));
+            });
+        });
+
+        wristSlider.addEventListener('input', e => setModalWristValue(parseFloat(e.target.value)));
+        document.getElementById('wrist-minus').addEventListener('click', () => setModalWristValue(state.targetWristCm - 0.5));
+        document.getElementById('wrist-plus').addEventListener('click', () => setModalWristValue(state.targetWristCm + 0.5));
+
+        document.getElementById('btn-open-wrist-modal').addEventListener('click', () => {
+            wristModal.classList.remove('hidden');
+        });
+        document.getElementById('btn-close-wrist-modal').addEventListener('click', () => {
+            wristModal.classList.add('hidden');
+        });
+        document.getElementById('btn-confirm-wrist').addEventListener('click', () => {
+            wristModal.classList.add('hidden');
+            updateMetricsUI();
+            renderWorkbench();
+            showToast(`已設定目標手圍為 ${state.targetWristCm.toFixed(1)} cm`);
+        });
+        document.getElementById('btn-start-empty').addEventListener('click', () => {
+            state.bracelet = [];
+            state.selectedUid = null;
+            wristModal.classList.add('hidden');
+            updateMetricsUI();
+            renderWorkbench();
+            showToast('已開啟空白手串畫布');
+        });
+
+        // Step 3 Finish & Export Modal Controls
+        document.getElementById('btn-finish-design').addEventListener('click', generateQuoteCardAndOpenModal);
+        document.getElementById('btn-close-quote-modal').addEventListener('click', () => {
+            document.getElementById('quote-modal').classList.add('hidden');
+        });
+
+        document.getElementById('btn-download-png').addEventListener('click', () => {
+            const imgSrc = document.getElementById('exported-quote-img').src;
+            if (!imgSrc) return;
+            const a = document.createElement('a');
+            a.href = imgSrc;
+            a.download = `雲晶手串設計單_${state.targetWristCm}cm.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast('已開始下載高清手串報價圖！');
+        });
+
+        document.getElementById('btn-copy-recipe').addEventListener('click', () => {
+            if (state.lastOrderSummaryText) {
+                copyTextToClipboard(state.lastOrderSummaryText);
+                showToast('✓ 已複製定製配方與報價明細！');
+            }
+        });
+
+        document.getElementById('btn-pay-shipia').addEventListener('click', () => {
+            if (state.lastOrderSummaryText) {
+                copyTextToClipboard(state.lastOrderSummaryText);
+            }
+            document.getElementById('shipia-modal').classList.remove('hidden');
+        });
+
+        document.getElementById('btn-cancel-shipia').addEventListener('click', () => {
+            document.getElementById('shipia-modal').classList.add('hidden');
+        });
+
+        // Toast Helper
+        let toastTimeout = null;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.remove('opacity-0', '-translate-y-2');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 2200);
+        }
+
+        // Initial Boot
+        window.onload = function () {
+            renderSubCategories();
+            renderCatalogGrid();
+            // Load the reference video's signature Yellow Agate + Silver Pumpkin + Kitty & Lucky Bag bracelet by default!
+            loadPresetRecipe(PRESET_DESIGNS[0].recipe, PRESET_DESIGNS[0].name);
+            resizeCanvas();
+        };
+    </script>
+</body>
+</html>
